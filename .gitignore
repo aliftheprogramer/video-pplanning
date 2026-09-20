@@ -1,7 +1,25 @@
+# Dependencies and build output
 node_modules
 dist
-.DS_Store
-.env
+*.tsbuildinfo
 
-# Ignore the output video from Git but not videos you import into src/.
+# Rendered videos (exports live in out/, re-render anytime)
 out
+
+# Secrets and local config
+.env
+.env.*
+!.env.example
+.claude/settings.local.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/*
+!.vscode/extensions.json
+.idea
