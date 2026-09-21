@@ -144,7 +144,9 @@ export const Intro: React.FC<IntroProps> = ({
   const t = frame / fps;
 
   const g = rawFrame / fps - videoStartSec;
-  const videoFrame = Math.round(guideToRec(g, guide.holds) * fps);
+  const videoFrame = Math.round(
+    guideToRec(g, guide.holds, guide.cuts ?? []) * fps,
+  );
 
   const toScreen = (vx: number, vy: number) =>
     videoToScreen(vx, vy, videoCropTop, videoWidth, videoHeight);

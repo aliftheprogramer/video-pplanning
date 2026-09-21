@@ -3,6 +3,8 @@ export type Point = { x: number; y: number };
 
 export type Hold = { at: number; dur: number };
 
+export type Cut = { from: number; to: number };
+
 export type Spot = {
   from: number;
   to: number;
@@ -38,6 +40,7 @@ export type ZoomCue = {
 
 export type GuideData = {
   holds: Hold[];
+  cuts?: Cut[];
   captions: CaptionCue[];
   spots: Spot[];
   zooms: ZoomCue[];
