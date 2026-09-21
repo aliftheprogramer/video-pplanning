@@ -54,7 +54,7 @@ const end = leave(67.3);
 
 const startNowBtn1: Rect = { x: 128, y: 755, w: 352, h: 80 };
 const nextBtn: Rect = { x: 40, y: 1445, w: 640, h: 100 };
-const propertyDims: Rect = { x: 32, y: 670, w: 656, h: 435 };
+const propertyDims: Rect = { x: 32, y: 645, w: 656, h: 500 };
 const furnishedOptions: Rect = { x: 24, y: 395, w: 672, h: 250 };
 const amenitiesArea: Rect = { x: 24, y: 195, w: 672, h: 1140 };
 const rulesArea: Rect = { x: 24, y: 395, w: 672, h: 830 };
