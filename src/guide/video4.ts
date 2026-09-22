@@ -36,6 +36,10 @@ const { arrive, leave } = guideClock(holds, cuts);
 const tapStartNow = arrive(4.2);
 const tapAddPhotos = arrive(8.2);
 const tapSelesai = arrive(13.0);
+// Tapping "Selesai" doesn't jump straight into the crop screen — there's a
+// brief transition (a flash of the photos-step screen, then the sheet
+// sliding up) before the first photo's crop view actually renders here.
+const cropArrive = arrive(14.3);
 const cropConfirms = [16.9, 19.8, 20.9, 21.9, 22.9].map((at) => ({
   at,
   arrive: arrive(at),
@@ -53,6 +57,10 @@ const tapSaveConfirmation = arrive(30.3);
 // until here.
 const summaryArrive = arrive(34.85);
 const tapNext = arrive(37.2);
+// The AI fills in the first 4 chips right away, but the 5th photo's chip
+// (the one that lands on "Others") only renders — and the list only
+// auto-scrolls to reveal it — once this settles, a couple seconds later.
+const fifthChipAppear = arrive(52.2);
 const tapOthersChip = arrive(53.8);
 const tapLivingRoom = arrive(57.5);
 const tapSaveLabels = arrive(59.6);
@@ -72,8 +80,13 @@ const okayBtn: Rect = { x: 40, y: 1445, w: 640, h: 100 };
 const saveConfirmationBtn: Rect = { x: 40, y: 1445, w: 640, h: 100 };
 const nextBtn: Rect = { x: 40, y: 1445, w: 640, h: 100 };
 // The 5th photo's room-type chip: the one AI auto-guesses as "Others" and
-// the user corrects to "Living Room" — same rect serves both moments.
+// the user corrects to "Living Room" — same rect serves both moments. Only
+// valid once the list has auto-scrolled and the chip has rendered (see
+// fifthChipAppear) — before that this space is still empty.
 const fifthChip: Rect = { x: 39, y: 1197, w: 306, h: 68 };
+// The first two (already-labeled) rows, shown while the 5th chip is still
+// missing/loading.
+const firstTwoRowsArea: Rect = { x: 12, y: 380, w: 696, h: 770 };
 const livingRoomOption: Rect = { x: 36, y: 280, w: 648, h: 64 };
 const saveLabelsBtn: Rect = { x: 40, y: 1445, w: 640, h: 100 };
 const tourAddNowBtn: Rect = { x: 39, y: 1300, w: 642, h: 80 };
@@ -122,7 +135,7 @@ export const video4: GuideData = {
       icon: "check",
       text: "Crop each [[photo]] to fit",
       steps: cropConfirms.map((c, i) => ({
-        from: i === 0 ? tapSelesai - 0.15 : cropConfirms[i - 1].leave,
+        from: i === 0 ? cropArrive : cropConfirms[i - 1].leave,
         to: c.leave,
         label: `${i + 1}/5`,
       })),
@@ -232,7 +245,7 @@ export const video4: GuideData = {
       tapAt: tapSelesai,
     },
     ...cropConfirms.map((c, i) => ({
-      from: i === 0 ? tapSelesai + 0.2 : cropConfirms[i - 1].leave,
+      from: i === 0 ? cropArrive : cropConfirms[i - 1].leave,
       to: c.leave,
       rect: cropImageArea,
       radius: 24,
@@ -311,6 +324,13 @@ export const video4: GuideData = {
     },
     {
       from: arrive(48.2) + 0.3,
+      to: fifthChipAppear - 0.1,
+      rect: firstTwoRowsArea,
+      radius: 16,
+      dim: false,
+    },
+    {
+      from: fifthChipAppear - 0.1,
       to: tapOthersChip - 0.15,
       rect: fifthChip,
       radius: 34,
@@ -397,7 +417,7 @@ export const video4: GuideData = {
       easeOut: 0.6,
     },
     {
-      from: tapSelesai,
+      from: cropArrive - 0.3,
       to: cropConfirms[4].leave + 0.3,
       scale: 1.1,
       target: center(cropImageArea),
