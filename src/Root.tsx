@@ -3,10 +3,12 @@ import { Composition } from "remotion";
 import { video1GuideEnd } from "./guide/video1";
 import { video2GuideEnd } from "./guide/video2";
 import { video3GuideEnd } from "./guide/video3";
+import { video4GuideEnd } from "./guide/video4";
 import { introSchema } from "./Intro";
 import { StartHere } from "./StartHere";
 import { Step1 } from "./Step1";
 import { Step2 } from "./Step2";
+import { Step3 } from "./Step3";
 
 const FPS = 60;
 
@@ -80,6 +82,29 @@ export const RemotionRoot: React.FC = () => {
         }}
         calculateMetadata={({ props }) => ({
           durationInFrames: Math.ceil((props.videoStartSec + video3GuideEnd) * FPS),
+        })}
+      />
+      <Composition
+        id="Step3PhotosDocuments"
+        component={Step3}
+        schema={introSchema}
+        durationInFrames={1}
+        fps={FPS}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          subtitle: "Step 3 of 4",
+          title: "Photos and Documents",
+          iconFile: "icon-primary.png",
+          phoneFile: "phone.webp",
+          videoFile: "step3-photos-documents-recording.mp4",
+          videoWidth: 720,
+          videoHeight: 1600,
+          videoCropTop: 0.052,
+          videoStartSec: 3.7,
+        }}
+        calculateMetadata={({ props }) => ({
+          durationInFrames: Math.ceil((props.videoStartSec + video4GuideEnd) * FPS),
         })}
       />
     </>
