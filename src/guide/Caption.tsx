@@ -35,6 +35,12 @@ const ICONS: Record<ChipIcon, React.ReactNode> = {
       <path d="m8 12.4 2.8 2.8L16 9.6" />
     </>
   ),
+  dollar: (
+    <>
+      <path d="M12 3v18" />
+      <path d="M16.5 7.5c0-1.7-2-3-4.5-3s-4.5 1.2-4.5 3c0 1.7 2 2.4 4.5 3s4.5 1.3 4.5 3-2 3-4.5 3-4.5-1.3-4.5-3" />
+    </>
+  ),
 };
 
 const Icon: React.FC<{ name: ChipIcon }> = ({ name }) => (

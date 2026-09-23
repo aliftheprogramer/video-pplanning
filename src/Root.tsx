@@ -4,11 +4,13 @@ import { video1GuideEnd } from "./guide/video1";
 import { video2GuideEnd } from "./guide/video2";
 import { video3GuideEnd } from "./guide/video3";
 import { video4GuideEnd } from "./guide/video4";
+import { video6GuideEnd } from "./guide/video6";
 import { introSchema } from "./Intro";
 import { StartHere } from "./StartHere";
 import { Step1 } from "./Step1";
 import { Step2 } from "./Step2";
 import { Step3 } from "./Step3";
+import { Step4 } from "./Step4";
 
 const FPS = 60;
 
@@ -105,6 +107,29 @@ export const RemotionRoot: React.FC = () => {
         }}
         calculateMetadata={({ props }) => ({
           durationInFrames: Math.ceil((props.videoStartSec + video4GuideEnd) * FPS),
+        })}
+      />
+      <Composition
+        id="Step4PriceSettings"
+        component={Step4}
+        schema={introSchema}
+        durationInFrames={1}
+        fps={FPS}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          subtitle: "Step 4 of 4",
+          title: "Price and Settings",
+          iconFile: "icon-primary.png",
+          phoneFile: "phone.webp",
+          videoFile: "step4-price-settings-recording.mp4",
+          videoWidth: 720,
+          videoHeight: 1600,
+          videoCropTop: 0.052,
+          videoStartSec: 3.7,
+        }}
+        calculateMetadata={({ props }) => ({
+          durationInFrames: Math.ceil((props.videoStartSec + video6GuideEnd) * FPS),
         })}
       />
     </>

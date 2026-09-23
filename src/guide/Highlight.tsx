@@ -72,14 +72,34 @@ const spotState = (g: number, spots: ScreenSpot[]) => {
   return { shape, dim, opacity };
 };
 
+// `circle` mode renders every rect-shaped highlight (mask hole, glow,
+// border, ripple) as a circle inscribed around the same centre instead —
+// used only by the restyled Step 4 video per its brief ("circular highlight
+// on the tap point"). Default stays `rect` so the other 4 videos, which
+// pass no `shape`, render exactly as before.
+const shapeProps = (s: Shape, shape: "rect" | "circle") => {
+  if (shape === "circle") {
+    const cx = s.x + s.w / 2;
+    const cy = s.y + s.h / 2;
+    const r = (Math.sqrt(s.w * s.w + s.h * s.h) / 2) * 0.85;
+    return { tag: "circle" as const, props: { cx, cy, r } };
+  }
+  return {
+    tag: "rect" as const,
+    props: { x: s.x, y: s.y, width: s.w, height: s.h, rx: s.r },
+  };
+};
+
 export const Highlight: React.FC<{
   readonly g: number;
   readonly spots: ScreenSpot[];
   readonly width: number;
   readonly height: number;
-}> = ({ g, spots, width, height }) => {
+  readonly shape?: "rect" | "circle";
+}> = ({ g, spots, width, height, shape = "rect" }) => {
   const state = spotState(g, spots);
   const pulse = 0.5 + 0.5 * Math.sin(g * Math.PI * 2 * 1.1);
+  const Tag = shape === "circle" ? "circle" : "rect";
 
   const ripples = spots.flatMap((spot, si) =>
     spot.tapAt === undefined
@@ -91,14 +111,12 @@ export const Highlight: React.FC<{
           }
           const e = Easing.out(Easing.cubic)(p);
           const s = grow(shapeOf(spot), 4 + 56 * e);
+          const { tag, props } = shapeProps(s, shape);
+          const Ripple = tag;
           return (
-            <rect
+            <Ripple
               key={`${si}-${j}`}
-              x={s.x}
-              y={s.y}
-              width={s.w}
-              height={s.h}
-              rx={s.r}
+              {...props}
               fill="none"
               stroke={ORANGE_400}
               strokeWidth={1 + 6 * (1 - e)}
@@ -107,6 +125,8 @@ export const Highlight: React.FC<{
           );
         }),
   );
+
+  const shapeEl = state ? shapeProps(state.shape, shape) : null;
 
   return (
     <svg
@@ -121,22 +141,14 @@ export const Highlight: React.FC<{
         <filter id="hl-glow" x="-30%" y="-30%" width="160%" height="160%">
           <feGaussianBlur stdDeviation="12" />
         </filter>
-        {state ? (
+        {shapeEl ? (
           <mask id="hl-mask">
             <rect width={width} height={height} fill="white" />
-            <rect
-              x={state.shape.x}
-              y={state.shape.y}
-              width={state.shape.w}
-              height={state.shape.h}
-              rx={state.shape.r}
-              fill="black"
-              filter="url(#hl-soft)"
-            />
+            <Tag {...shapeEl.props} fill="black" filter="url(#hl-soft)" />
           </mask>
         ) : null}
       </defs>
-      {state ? (
+      {state && shapeEl ? (
         <>
           <rect
             width={width}
@@ -145,24 +157,16 @@ export const Highlight: React.FC<{
             opacity={0.45 * state.dim * state.opacity}
             mask="url(#hl-mask)"
           />
-          <rect
-            x={state.shape.x}
-            y={state.shape.y}
-            width={state.shape.w}
-            height={state.shape.h}
-            rx={state.shape.r}
+          <Tag
+            {...shapeEl.props}
             fill="none"
             stroke={ORANGE_500}
             strokeWidth={16}
             opacity={0.28 * state.opacity}
             filter="url(#hl-glow)"
           />
-          <rect
-            x={state.shape.x}
-            y={state.shape.y}
-            width={state.shape.w}
-            height={state.shape.h}
-            rx={state.shape.r}
+          <Tag
+            {...shapeEl.props}
             fill="none"
             stroke={ORANGE_500}
             strokeWidth={5 + 2 * pulse}

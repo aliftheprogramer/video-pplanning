@@ -15,7 +15,7 @@ export type Spot = {
   tapAt?: number;
 };
 
-export type ChipIcon = "house" | "plus" | "check";
+export type ChipIcon = "house" | "plus" | "check" | "dollar";
 
 export type StepChip = { from: number; to: number; label: string };
 
