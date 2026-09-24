@@ -30,8 +30,13 @@ const box = (cx: number, cy: number, w: number, h: number): Rect => ({
 const rects = {
   continueFillBtn: box(317, 1205, 354, 98),
   getRecommendationPill: box(357, 970, 505, 80),
+  priceDisplayArea: box(365, 480, 460, 100),
   flexibleCheckboxRow: box(330, 710, 340, 70),
-  negotiationFields: box(360, 750, 668, 700),
+  // Tight to the "Negotiation Settings" card itself — the original
+  // (360,750,668,700) started above "RM1000/mo" (irrelevant, already set)
+  // and cut off mid-card before "Auto-Approve Above", confirmed by a direct
+  // full-resolution frame extraction rather than a downscaled preview.
+  negotiationFields: box(360, 960, 660, 420),
   nextBtn: box(360, 1544, 660, 100),
   durationField: box(575, 640, 150, 70),
   tabWhatYouEarn: box(360, 650, 668, 60),
@@ -73,6 +78,15 @@ type Beat = {
   // the video and can still anchor a caption) — used for the tab switch,
   // which doesn't need a box drawing attention to it.
   skip?: boolean;
+  // Delays this beat's spot start past the natural "touches the previous
+  // beat's end" boundary. A touching boundary (gap 0) chain-morphs the
+  // highlight shape smoothly, which looks fine between similarly-sized
+  // boxes — but morphing the huge negotiationFields card down into the
+  // small nextBtn pill mid-flight reads as a stray sliver sweeping across
+  // the screen. A delay past Highlight.tsx's CHAIN_GAP (0.05s) makes the
+  // two fade independently instead, which looks clean for that big a shape
+  // change. Confirmed against the actual render, not guessed.
+  startDelay?: number;
 };
 
 const beats: Beat[] = [
@@ -91,15 +105,27 @@ const beats: Beat[] = [
   {
     name: "getRecommendation",
     at: 3.65,
-    // Same reasoning as continueFill above — extended past the source's own
-    // pause so "Get a suggested price from the app" is readable. 0.95 (not
-    // just enough for the reveal) because the very next caption's own
-    // morph-delay gap otherwise caps this one's min-duration extension short
-    // — verified against the actual withMinDuration() cap math, not guessed.
+    // 0.95 (not just enough for the tap/loading freeze) because the next
+    // caption's own morph-delay gap caps this one's min-duration extension
+    // short otherwise — verified against the actual withMinDuration() cap
+    // math, same reasoning as before this beat got split in two.
     dur: 0.95,
     rect: rects.getRecommendationPill,
     radius: 27,
     gateAt: 3.0,
+  },
+  {
+    // The recording settles on the AI-suggested price (RM1000) well before
+    // "Enable Flexible Price" gets tapped — this beat calls that result out
+    // explicitly instead of letting it flash past unremarked on the way to
+    // the next action, matching the old video5's "AI suggests RM X per
+    // month" beat. 0.95 for the same min-duration-cap reason as above.
+    name: "priceUpdated",
+    at: 4.3,
+    dur: 0.95,
+    rect: rects.priceDisplayArea,
+    radius: 22,
+    dim: true,
   },
   {
     name: "enableFlexible",
@@ -116,7 +142,14 @@ const beats: Beat[] = [
     radius: 20,
     dim: true,
   },
-  { name: "nextToIncome", at: 11.75, dur: 0.3, rect: rects.nextBtn, radius: 50 },
+  {
+    name: "nextToIncome",
+    at: 11.75,
+    dur: 0.3,
+    rect: rects.nextBtn,
+    radius: 50,
+    startDelay: 0.15,
+  },
   { name: "durationTap", at: 12.85, dur: 0.3, rect: rects.durationField, radius: 20 },
   {
     name: "durationSettled",
@@ -212,10 +245,13 @@ const { arrive, leave } = guideClock(holds);
 const byName = Object.fromEntries(beats.map((b, i) => [b.name, i]));
 const beatStart = (i: number) => {
   const b = beats[i];
-  if (b.gateAt !== undefined) {
-    return arrive(b.gateAt);
-  }
-  return i === 0 ? arrive(b.at) - (b.leadIn ?? 0) : leave(beats[i - 1].at);
+  const base =
+    b.gateAt !== undefined
+      ? arrive(b.gateAt)
+      : i === 0
+        ? arrive(b.at) - (b.leadIn ?? 0)
+        : leave(beats[i - 1].at);
+  return base + (b.startDelay ?? 0);
 };
 const beatEnd = (i: number) => leave(beats[i].at);
 const startOf = (name: string) => beatStart(byName[name]);
@@ -286,22 +322,27 @@ const end = leave(beats[beats.length - 1].at);
 
 export const video6: GuideData = {
   holds,
+  // Wording follows the house style set by videos 1-3: a short action
+  // phrase naming the actual on-screen control ("Tap [[Start now]] to
+  // begin", "Choose your [[property type]]"), never meta-commentary about
+  // where the viewer "is" in the flow.
   captions: withMinDuration([
-    caption("continueFill", "continueFill", "check", "Back on the hub — [[start Step 4]]"),
+    caption("continueFill", "continueFill", "check", "Tap [[Continue fill]] to begin"),
     caption(
       "getRecommendation",
       "getRecommendation",
-      "dollar",
-      "Get a [[suggested price]] from the app",
+      "plus",
+      "Tap [[Get recommendation]] for AI pricing",
     ),
+    caption("priceUpdated", "priceUpdated", "check", "AI [[recommends]] a price for you"),
     caption(
       "enableFlexible",
       "negotiationFields",
-      "check",
+      "plus",
       "Turn on [[Flexible Price]] for negotiation",
     ),
     caption("nextToIncome", "nextToIncome", "check", "Tap [[Next]] to continue"),
-    caption("durationTap", "durationSettled", "check", "Set the [[rental duration]]"),
+    caption("durationTap", "durationSettled", "check", "Choose your [[rental duration]]"),
     caption("whatYouEarnTab", "whatYouEarnTab", "check", "See what [[you earn]]"),
     caption(
       "totalEarningLink",
@@ -309,24 +350,14 @@ export const video6: GuideData = {
       "check",
       "Check the [[total earning]] breakdown",
     ),
-    caption("backFromEarning", "backFromEarning", "check", "Go [[back]] to the summary"),
+    caption("backFromEarning", "backFromEarning", "check", "Tap [[back]] to return"),
     caption("nextToBooking", "nextToBooking", "check", "Tap [[Next]] to continue"),
-    caption(
-      "useInstantBook",
-      "useInstantBook",
-      "check",
-      "Approve [[each booking]], or use Instant Book",
-    ),
+    caption("useInstantBook", "useInstantBook", "check", "Switch to [[Instant Book]]"),
     caption("coolingPeriod", "applyCooling", "plus", "Set your [[cooling period]]"),
-    caption(
-      "rentalTerm",
-      "applyRentalTerm",
-      "plus",
-      "Set how [[long]] you'll rent it out",
-    ),
+    caption("rentalTerm", "applyRentalTerm", "plus", "Choose your [[rental term]]"),
     caption("nextToDiscounts", "nextToDiscounts", "check", "Tap [[Next]] to continue"),
     caption("lastMinuteDiscount", "save", "plus", "Add [[discounts]] to attract guests"),
-    caption("publishNow", "publishNow", "check", "All 4 steps done — [[publish]]"),
+    caption("publishNow", "publishNow", "check", "All done — tap [[Publish now]]"),
     caption(
       "analyzing",
       "analyzing",
