@@ -30,7 +30,7 @@ const box = (cx: number, cy: number, w: number, h: number): Rect => ({
 const rects = {
   continueFillBtn: box(317, 1205, 354, 98),
   getRecommendationPill: box(357, 970, 505, 80),
-  flexibleCheckboxRow: box(325, 690, 350, 100),
+  flexibleCheckboxRow: box(330, 710, 340, 70),
   negotiationFields: box(360, 750, 668, 700),
   nextBtn: box(360, 1544, 660, 100),
   durationField: box(575, 640, 150, 70),
@@ -62,6 +62,17 @@ type Beat = {
   radius?: number;
   dim?: boolean;
   leadIn?: number; // only meaningful for the first beat
+  // Overrides the natural "starts right when the previous beat's hold ends"
+  // rule with a later rec-second. Needed where the target element doesn't
+  // actually render until partway through the gap — e.g. the recommendation
+  // pill is still hidden behind an "Enter property price" card for ~2s
+  // after the hub tap, so highlighting it immediately would circle empty
+  // space (confirmed by direct frame extraction, not guessed).
+  gateAt?: number;
+  // Skips the highlight box entirely for this beat (it still holds/freezes
+  // the video and can still anchor a caption) — used for the tab switch,
+  // which doesn't need a box drawing attention to it.
+  skip?: boolean;
 };
 
 const beats: Beat[] = [
@@ -79,6 +90,7 @@ const beats: Beat[] = [
     dur: 0.35,
     rect: rects.getRecommendationPill,
     radius: 27,
+    gateAt: 3.0,
   },
   {
     name: "enableFlexible",
@@ -105,7 +117,14 @@ const beats: Beat[] = [
     radius: 20,
     dim: true,
   },
-  { name: "whatYouEarnTab", at: 19.75, dur: 0.3, rect: rects.tabWhatYouEarn, radius: 20 },
+  {
+    name: "whatYouEarnTab",
+    at: 19.75,
+    dur: 0.3,
+    rect: rects.tabWhatYouEarn,
+    radius: 20,
+    skip: true,
+  },
   {
     name: "totalEarningLink",
     at: 22.75,
@@ -182,22 +201,42 @@ const holds: Hold[] = beats.map((b) => ({ at: b.at, dur: b.dur }));
 const { arrive, leave } = guideClock(holds);
 
 const byName = Object.fromEntries(beats.map((b, i) => [b.name, i]));
-const beatStart = (i: number) =>
-  i === 0 ? arrive(beats[0].at) - (beats[0].leadIn ?? 0) : leave(beats[i - 1].at);
+const beatStart = (i: number) => {
+  const b = beats[i];
+  if (b.gateAt !== undefined) {
+    return arrive(b.gateAt);
+  }
+  return i === 0 ? arrive(b.at) - (b.leadIn ?? 0) : leave(beats[i - 1].at);
+};
 const beatEnd = (i: number) => leave(beats[i].at);
 const startOf = (name: string) => beatStart(byName[name]);
 const endOf = (name: string) => beatEnd(byName[name]);
 
 const center = (r: Rect): Point => ({ x: r.x + r.w / 2, y: r.y + r.h / 2 });
 
-const spots: Spot[] = beats.map((b, i) => ({
-  from: beatStart(i),
-  to: beatEnd(i),
-  rect: b.rect,
-  radius: b.radius ?? 60,
-  dim: b.dim,
-  tapAt: b.dim ? undefined : arrive(b.at),
-}));
+const spots: Spot[] = beats
+  .map((b, i): Spot | null =>
+    b.skip
+      ? null
+      : {
+          from: beatStart(i),
+          to: beatEnd(i),
+          rect: b.rect,
+          radius: b.radius ?? 60,
+          dim: b.dim,
+          tapAt: b.dim ? undefined : arrive(b.at),
+        },
+  )
+  .filter((s): s is Spot => s !== null);
+
+// The highlight box takes ~0.5s to chain-morph from one shape to the next
+// (see Highlight.tsx's MOVE constant). Captions switch instantly, so a new
+// caption naming the next target would say the right thing over a box that
+// hasn't arrived yet. Delaying each caption's start past that morph window
+// keeps text and box in sync — confirmed against the render, which showed
+// exactly this lag (caption already on "Rental Term" while the box was
+// still mid-flight from the cooling Apply button).
+const CAPTION_MORPH_DELAY = 0.45;
 
 const caption = (
   fromBeat: string,
@@ -206,7 +245,10 @@ const caption = (
   text: string,
   keep?: boolean,
 ): CaptionCue => ({
-  from: startOf(fromBeat),
+  from:
+    fromBeat === beats[0].name
+      ? startOf(fromBeat)
+      : startOf(fromBeat) + CAPTION_MORPH_DELAY,
   to: endOf(toBeat),
   icon,
   text,
@@ -269,12 +311,17 @@ export const video6: GuideData = {
   spots,
   zooms: [
     {
+      // Shorter ease than the other zooms: the hub-to-tap window here is
+      // under a second (the source recording taps "Continue fill" almost
+      // immediately), so the usual 0.6s ease never finishes settling before
+      // easing back out — it reads as a slow, perpetually-moving camera
+      // instead of a quick punch-in. Confirmed against the render.
       from: startOf("continueFill"),
       to: endOf("continueFill"),
       scale: 1.2,
       target: center(rects.continueFillBtn),
-      easeIn: 0.6,
-      easeOut: 0.6,
+      easeIn: 0.25,
+      easeOut: 0.25,
     },
     {
       from: startOf("getRecommendation"),
