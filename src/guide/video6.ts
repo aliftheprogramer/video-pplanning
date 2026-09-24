@@ -79,7 +79,11 @@ const beats: Beat[] = [
   {
     name: "continueFill",
     at: 0.85,
-    dur: 0.3,
+    // Held longer than the source recording's own pause here (which is
+    // near-instant) so the "Back on the hub" caption has enough real time
+    // to fully reveal and be read — matches the other 4 guide videos, whose
+    // opening beat holds for 0.5-1.4s rather than this video's original 0.3s.
+    dur: 0.5,
     rect: rects.continueFillBtn,
     radius: 48,
     leadIn: 0.4,
@@ -87,7 +91,12 @@ const beats: Beat[] = [
   {
     name: "getRecommendation",
     at: 3.65,
-    dur: 0.35,
+    // Same reasoning as continueFill above — extended past the source's own
+    // pause so "Get a suggested price from the app" is readable. 0.95 (not
+    // just enough for the reveal) because the very next caption's own
+    // morph-delay gap otherwise caps this one's min-duration extension short
+    // — verified against the actual withMinDuration() cap math, not guessed.
+    dur: 0.95,
     rect: rects.getRecommendationPill,
     radius: 27,
     gateAt: 3.0,
@@ -255,11 +264,29 @@ const caption = (
   keep,
 });
 
+// Caption.tsx staggers each word in over ~0.07s and reserves a fixed 0.3s
+// for the exit fade, so a short caption (a single quick beat, e.g. right
+// after the hub tap) can finish revealing and start fading before it was
+// ever comfortably readable. This floor stretches any caption under 1.6s up
+// to that length — but never past the next caption's own start, since
+// Caption.tsx shows whichever cue `Array.find` hits first and overlapping
+// ranges would silently hide the second one.
+const MIN_CAPTION_DURATION = 1.6;
+
+const withMinDuration = (cues: CaptionCue[]): CaptionCue[] =>
+  cues.map((cue, i) => {
+    const nextFrom = cues[i + 1]?.from ?? Infinity;
+    const wanted = cue.from + MIN_CAPTION_DURATION;
+    return cue.to - cue.from >= MIN_CAPTION_DURATION
+      ? cue
+      : { ...cue, to: Math.min(wanted, nextFrom) };
+  });
+
 const end = leave(beats[beats.length - 1].at);
 
 export const video6: GuideData = {
   holds,
-  captions: [
+  captions: withMinDuration([
     caption("continueFill", "continueFill", "check", "Back on the hub — [[start Step 4]]"),
     caption(
       "getRecommendation",
@@ -307,7 +334,7 @@ export const video6: GuideData = {
       "The app [[checks your listing]] first",
       true,
     ),
-  ],
+  ]),
   spots,
   zooms: [
     {
