@@ -10,6 +10,9 @@ const holds: Hold[] = [
   // flashing by.
   { at: 5.6, dur: 1.3 },
   { at: 13.0, dur: 0.8 },
+  // Hold when the search result row appears after the cut so the viewer
+  // has time to read the result before the tap ripple starts.
+  { at: 23.0, dur: 0.6 },
   { at: 23.5, dur: 1.0 },
   { at: 32.5, dur: 1.7 },
   { at: 39.0, dur: 1.7 },
@@ -24,6 +27,7 @@ const holds: Hold[] = [
 const cuts: Cut[] = [
   { from: 7.3, to: 11.8 }, // static map, nothing happening
   { from: 13.5, to: 23.0 }, // letter-by-letter location search typing (lands right as the result row appears)
+  { from: 34.2, to: 38.0 }, // hesitation scroll down and back up on address screen
   { from: 41.0, to: 46.0 }, // letter-by-letter title typing
 ];
 
@@ -45,7 +49,7 @@ const nextBtn: Rect = { x: 40, y: 1445, w: 640, h: 100 };
 const searchBar: Rect = { x: 48, y: 330, w: 624, h: 76 };
 const searchResultRow: Rect = { x: 24, y: 445, w: 672, h: 95 };
 const mapArea: Rect = { x: 0, y: 436, w: 720, h: 890 };
-const addressForm: Rect = { x: 28, y: 280, w: 664, h: 980 };
+const addressForm: Rect = { x: 36, y: 230, w: 648, h: 1125 };
 const titleInput: Rect = { x: 40, y: 490, w: 640, h: 96 };
 // Save button while the keyboard is open sits much higher than the
 // bottom-pinned CTA the other screens use (keyboard pushes it up).
@@ -65,7 +69,7 @@ export const video2: GuideData = {
       text: "Tap [[Start now]] to begin",
     },
     {
-      from: leave(1.6) + 0.2,
+      from: arrive(2.05),
       to: leave(4.5),
       icon: "check",
       text: "Choose your [[property type]]",
@@ -77,49 +81,49 @@ export const video2: GuideData = {
       text: "Tap [[Next]] to continue",
     },
     {
-      from: leave(5.6) + 0.2,
+      from: arrive(11.8),
       to: leave(23.5),
       icon: "house",
       text: "Search for your [[location]]",
     },
     {
-      from: leave(23.5) + 0.2,
-      to: tapNext2 - 0.65,
+      from: arrive(24.25),
+      to: tapNext2 - 0.85,
       icon: "check",
       text: "Drag the pin to [[fine-tune]] it",
     },
     {
-      from: tapNext2 - 0.65,
+      from: tapNext2 - 0.70,
       to: leave(32.5),
       icon: "check",
       text: "Tap [[Next]] to confirm",
     },
     {
-      from: leave(32.5) + 0.2,
-      to: tapNext3 - 0.65,
+      from: arrive(33.00),
+      to: tapNext3 - 0.85,
       icon: "check",
       text: "Review your [[address]] details",
     },
     {
-      from: tapNext3 - 0.65,
+      from: tapNext3 - 0.70,
       to: leave(39.0),
       icon: "check",
       text: "Tap [[Next]] to confirm",
     },
     {
-      from: leave(39.0) + 0.2,
-      to: tapSave - 0.7,
+      from: arrive(39.50),
+      to: tapSave - 0.90,
       icon: "plus",
       text: "Give your listing a [[title]]",
     },
     {
-      from: tapSave - 0.7,
+      from: tapSave - 0.75,
       to: arrive(48.0) - 0.15,
       icon: "check",
       text: "Tap [[Save]] to finish",
     },
     {
-      from: arrive(48.0) - 0.15,
+      from: arrive(48.0) + 0.1,
       to: end,
       icon: "check",
       text: "[[Basic Information]] is complete!",
@@ -128,14 +132,14 @@ export const video2: GuideData = {
   ],
   spots: [
     {
-      from: tapStartNow - 0.4,
+      from: tapStartNow - 0.8,
       to: leave(1.6),
       rect: startNowBtn1,
       radius: 40,
       tapAt: tapStartNow,
     },
     {
-      from: leave(1.6) + 0.1,
+      from: arrive(2.05),
       to: leave(4.5),
       rect: apartmentCard,
       radius: 20,
@@ -149,62 +153,62 @@ export const video2: GuideData = {
       tapAt: tapNext1,
     },
     {
-      from: leave(5.6) + 0.2,
+      from: arrive(11.8) + 0.1,
       to: arrive(13.5),
       rect: searchBar,
       radius: 38,
       tapAt: tapSearchBar,
     },
     {
-      from: arrive(13.5),
+      from: arrive(23.0),
       to: leave(23.5),
       rect: searchResultRow,
       radius: 16,
       tapAt: tapSearchResult,
     },
     {
-      from: leave(23.5) + 0.1,
-      to: tapNext2 - 0.35,
+      from: arrive(24.25),
+      to: tapNext2 - 0.85,
       rect: mapArea,
       radius: 0,
       dim: false,
     },
     {
-      from: tapNext2 - 0.22,
+      from: tapNext2 - 0.70,
       to: leave(32.5),
       rect: nextBtn,
       radius: 52,
       tapAt: tapNext2,
     },
     {
-      from: leave(32.5) + 0.1,
-      to: tapNext3 - 0.35,
+      from: arrive(33.00),
+      to: tapNext3 - 0.85,
       rect: addressForm,
-      radius: 24,
+      radius: 28,
       dim: false,
     },
     {
-      from: tapNext3 - 0.22,
+      from: tapNext3 - 0.70,
       to: leave(39.0),
       rect: nextBtn,
       radius: 52,
       tapAt: tapNext3,
     },
     {
-      from: leave(39.0) + 0.1,
-      to: tapSave - 0.45,
+      from: arrive(39.50),
+      to: tapSave - 0.90,
       rect: titleInput,
       radius: 16,
     },
     {
-      from: tapSave - 0.35,
+      from: tapSave - 0.75,
       to: leave(47.0),
       rect: saveBtn,
       radius: 40,
       tapAt: tapSave,
     },
     {
-      from: arrive(48.0) + 0.1,
+      from: arrive(48.0) + 0.25,
       to: end,
       rect: completedStep1Row,
       radius: 32,
@@ -213,7 +217,7 @@ export const video2: GuideData = {
   ],
   zooms: [
     {
-      from: tapStartNow - 0.6,
+      from: tapStartNow - 0.8,
       to: leave(1.6),
       scale: 1.2,
       target: center(startNowBtn1),

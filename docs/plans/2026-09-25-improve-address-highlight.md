@@ -59,23 +59,23 @@ Terdapat 2 pendekatan untuk menangani scroll rekaman di detik 34.5–37.2:
 ## 3. Rencana Eksekusi Bertahap (Task-by-Task)
 
 ### Task 1: Penerapan Koordinat Presisi `addressForm`
-- [ ] Update definisi `addressForm` di [`src/guide/video2.ts`](file:///home/alif/Metairflow/video-result/video-pplanning/src/guide/video2.ts):
+- [x] Update definisi `addressForm` di [`src/guide/video2.ts`](file:///home/alif/Metairflow/video-result/video-pplanning/src/guide/video2.ts):
   ```ts
   const addressForm: Rect = { x: 36, y: 230, w: 648, h: 1125 };
   ```
-- [ ] Sesuaikan `radius` spot `addressForm` menjadi `28`.
+- [x] Sesuaikan `radius` spot `addressForm` menjadi `28`.
 
 ### Task 2: Implementasi Pemotongan Jitter Scroll (`cuts`)
-- [ ] Tambahkan rentang cut `{ from: 34.5, to: 37.2 }` pada array `cuts` di [`src/guide/video2.ts`](file:///home/alif/Metairflow/video-result/video-pplanning/src/guide/video2.ts).
-- [ ] Verifikasi sinkronisasi waktu caption cue (`Review your [[address]] details` dan `Tap [[Next]] to confirm`).
+- [x] Tambahkan rentang cut `{ from: 34.5, to: 37.2 }` pada array `cuts` di [`src/guide/video2.ts`](file:///home/alif/Metairflow/video-result/video-pplanning/src/guide/video2.ts).
+- [x] Verifikasi sinkronisasi waktu caption cue (`Review your [[address]] details` dan `Tap [[Next]] to confirm`).
 
 ### Task 3: Verifikasi Visual dengan Still Frame Render
-- [ ] Render frame 1800 (tampilan awal alamat dengan kotak baru):
+- [x] Render frame 1800 (tampilan awal alamat dengan kotak baru):
   ```bash
   npx remotion still src/index.ts Step1BasicInformation out/inspect/address_fixed_1800.png --frame 1800 --overwrite
   ```
-- [ ] Render frame saat tombol Next disorot untuk memastikan transisi bersih.
-- [ ] Jalankan `npm run lint` (`eslint src && tsc`) untuk menjamin zero regression.
+- [x] Render frame saat tombol Next disorot untuk memastikan transisi bersih.
+- [x] Jalankan `npm run lint` (`eslint src && tsc`) untuk menjamin zero regression.
 
 ---
 
