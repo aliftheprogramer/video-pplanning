@@ -182,7 +182,7 @@ export const video3: GuideData = {
       from: arrive(52.4),
       to: arrive(54.3),
       icon: "check",
-      text: "Choose [[Sabah Electricity]]",
+      text: "Choose the provider for [[your area]]",
     },
     {
       from: arrive(54.3),
@@ -194,7 +194,7 @@ export const video3: GuideData = {
       from: arrive(59.2),
       to: arrive(61.3),
       icon: "check",
-      text: "Select [[water provider]] and choose [[Air Selangor]]",
+      text: "Select the [[water provider]] for [[your area]]",
     },
     {
       from: arrive(61.3),
