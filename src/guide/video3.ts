@@ -69,11 +69,10 @@ const descriptionArea: Rect = { x: 24, y: 505, w: 672, h: 675 };
 // Bill accounts form elements
 const elecProviderField: Rect = { x: 24, y: 465, w: 672, h: 100 };
 const sabahElectricityItem: Rect = { x: 24, y: 1080, w: 672, h: 100 };
-const elecAccountField: Rect = { x: 24, y: 600, w: 672, h: 140 };
-const elecAccountFieldScrolled: Rect = { x: 24, y: 360, w: 672, h: 105 };
-const waterProviderFieldScrolled: Rect = { x: 24, y: 585, w: 672, h: 100 };
+const elecAccountField: Rect = { x: 24, y: 600, w: 672, h: 130 };
+const waterProviderField: Rect = { x: 24, y: 550, w: 672, h: 100 };
 const airSelangorItem: Rect = { x: 24, y: 720, w: 672, h: 95 };
-const waterAccountFieldScrolled: Rect = { x: 24, y: 650, w: 672, h: 105 };
+const waterAccountField: Rect = { x: 24, y: 690, w: 672, h: 130 };
 const saveBtn3: Rect = { x: 40, y: 975, w: 640, h: 105 };
 const completedStep2Row: Rect = { x: 36, y: 600, w: 648, h: 185 };
 
@@ -339,27 +338,20 @@ export const video3: GuideData = {
       radius: 16,
       tapAt: tapSabahElectricity,
     },
-    // Tap Electricity Account Number field (before keyboard opens)
+    // Tap Electricity Account Number field and type
     {
       from: arrive(54.4),
-      to: arrive(55.6),
+      to: arrive(59.1),
       rect: elecAccountField,
       radius: 16,
       tapAt: tapElecAccount,
-    },
-    // Scrolled form: Typing electricity account number
-    {
-      from: arrive(56.0),
-      to: arrive(59.1),
-      rect: elecAccountFieldScrolled,
-      radius: 16,
       dim: false,
     },
-    // Water Provider Dropdown (in scrolled state)
+    // Water Provider Dropdown
     {
       from: arrive(59.2),
       to: arrive(59.9),
-      rect: waterProviderFieldScrolled,
+      rect: waterProviderField,
       radius: 16,
       tapAt: tapWaterProvider,
     },
@@ -375,7 +367,7 @@ export const video3: GuideData = {
     {
       from: arrive(61.4),
       to: arrive(64.8),
-      rect: waterAccountFieldScrolled,
+      rect: waterAccountField,
       radius: 16,
       tapAt: tapWaterAccount,
       dim: false,
@@ -460,7 +452,7 @@ export const video3: GuideData = {
       from: arrive(54.5),
       to: arrive(59.0),
       scale: 1.15,
-      target: { x: 360, y: 480 },
+      target: { x: 360, y: 660 },
       easeIn: 0.6,
       easeOut: 0.5,
     },
@@ -469,7 +461,7 @@ export const video3: GuideData = {
       from: arrive(59.2),
       to: arrive(64.6),
       scale: 1.12,
-      target: { x: 360, y: 720 },
+      target: { x: 360, y: 740 },
       easeIn: 0.5,
       easeOut: 0.5,
     },
