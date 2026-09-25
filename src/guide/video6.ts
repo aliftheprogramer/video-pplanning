@@ -37,15 +37,23 @@ const rects = {
   // and cut off mid-card before "Auto-Approve Above", confirmed by a direct
   // full-resolution frame extraction rather than a downscaled preview.
   negotiationFields: box(360, 960, 660, 420),
-  nextBtn: box(360, 1544, 660, 100),
+  // Re-measured via a zoomed, gridded crop directly on the button (y
+  // 1443-1538) — the previous (360,1544,...) had drifted ~100px low,
+  // pushing the highlight past the button into the phone's bottom bezel.
+  nextBtn: box(360, 1490, 660, 100),
   durationField: box(575, 640, 150, 70),
   tabWhatYouEarn: box(360, 650, 668, 60),
-  totalEarningLink: box(370, 1270, 200, 50),
+  totalEarningLink: box(360, 1260, 180, 40),
   backArrowBtn: box(58, 140, 70, 70),
   useInstantBookCard: box(360, 792, 668, 200),
-  coolingPeriodRow: box(360, 1088, 668, 150),
+  // Measured post-selection: once "Use Instant Book" is chosen, its card
+  // shrinks (the unselected description text collapses) and everything
+  // below shifts up ~150px versus the pre-tap layout these were originally
+  // measured against — confirmed by comparing rec=27.0 (pre-tap reference,
+  // wrong) against rec=29.2 (the frame actually on screen at this beat).
+  coolingPeriodRow: box(360, 968, 668, 120),
   coolingModalStepper: box(360, 1150, 600, 460),
-  rentalTermRow: box(360, 1270, 668, 180),
+  rentalTermRow: box(360, 1152, 668, 140),
   rentalTermToggleRow: box(360, 844, 650, 170),
   shortTermPremiumCard: box(360, 864, 650, 580),
   lastMinuteDiscountRow: box(360, 688, 660, 160),
@@ -168,11 +176,16 @@ const beats: Beat[] = [
     skip: true,
   },
   {
+    // The "Total Earning" link doesn't actually render at this screen
+    // position until ~rec 21.3 — before that this spot is still showing
+    // "Total Gross Rent" content, confirmed by direct frame extraction
+    // (same bug class as the gated getRecommendation pill above).
     name: "totalEarningLink",
     at: 22.75,
     dur: 0.3,
     rect: rects.totalEarningLink,
     radius: 25,
+    gateAt: 21.3,
   },
   {
     name: "backFromEarning",
@@ -283,6 +296,22 @@ const spots: Spot[] = beats
 // still mid-flight from the cooling Apply button).
 const CAPTION_MORPH_DELAY = 0.45;
 
+// A beat right after a `skip` beat (or with its own `startDelay`) doesn't
+// chain-morph in — its box independently fades in from 0 opacity at exactly
+// its own `from`, at the right position the whole time. Delaying the
+// caption there too just means a fading-in box with no caption text next to
+// it for a stretch, reading as "a highlight appearing for no reason" (the
+// exact complaint this was checked against). Only beats that actually
+// chain-morph from a touching previous beat need the delay.
+const chainMorphsIn = (name: string): boolean => {
+  const i = byName[name];
+  if (i === 0) {
+    return false;
+  }
+  const prev = beats[i - 1];
+  return !prev.skip && !beats[i].startDelay && !beats[i].gateAt;
+};
+
 const caption = (
   fromBeat: string,
   toBeat: string,
@@ -291,7 +320,7 @@ const caption = (
   keep?: boolean,
 ): CaptionCue => ({
   from:
-    fromBeat === beats[0].name
+    fromBeat === beats[0].name || !chainMorphsIn(fromBeat)
       ? startOf(fromBeat)
       : startOf(fromBeat) + CAPTION_MORPH_DELAY,
   to: endOf(toBeat),

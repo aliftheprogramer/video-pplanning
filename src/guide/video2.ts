@@ -44,13 +44,13 @@ const apartmentCard: Rect = { x: 48, y: 355, w: 296, h: 167 };
 const nextBtn: Rect = { x: 40, y: 1445, w: 640, h: 100 };
 const searchBar: Rect = { x: 48, y: 330, w: 624, h: 76 };
 const searchResultRow: Rect = { x: 24, y: 445, w: 672, h: 95 };
-const mapArea: Rect = { x: 0, y: 436, w: 720, h: 930 };
-const addressForm: Rect = { x: 32, y: 330, w: 656, h: 900 };
+const mapArea: Rect = { x: 0, y: 436, w: 720, h: 890 };
+const addressForm: Rect = { x: 28, y: 280, w: 664, h: 980 };
 const titleInput: Rect = { x: 40, y: 490, w: 640, h: 96 };
 // Save button while the keyboard is open sits much higher than the
 // bottom-pinned CTA the other screens use (keyboard pushes it up).
 const saveBtn: Rect = { x: 42, y: 894, w: 636, h: 90 };
-const startNowBtn2: Rect = { x: 128, y: 755, w: 352, h: 80 };
+const completedStep1Row: Rect = { x: 40, y: 395, w: 650, h: 195 };
 
 const center = (r: Rect): Point => ({ x: r.x + r.w / 2, y: r.y + r.h / 2 });
 
@@ -84,30 +84,36 @@ export const video2: GuideData = {
     },
     {
       from: leave(23.5) + 0.2,
-      to: tapNext2 - 0.15,
+      to: tapNext2 - 0.65,
       icon: "check",
       text: "Drag the pin to [[fine-tune]] it",
     },
     {
-      from: tapNext2 - 0.15,
+      from: tapNext2 - 0.65,
       to: leave(32.5),
       icon: "check",
       text: "Tap [[Next]] to confirm",
     },
     {
       from: leave(32.5) + 0.2,
-      to: leave(39.0),
+      to: tapNext3 - 0.65,
       icon: "check",
       text: "Review your [[address]] details",
     },
     {
+      from: tapNext3 - 0.65,
+      to: leave(39.0),
+      icon: "check",
+      text: "Tap [[Next]] to confirm",
+    },
+    {
       from: leave(39.0) + 0.2,
-      to: tapSave - 0.15,
+      to: tapSave - 0.7,
       icon: "plus",
       text: "Give your listing a [[title]]",
     },
     {
-      from: tapSave - 0.15,
+      from: tapSave - 0.7,
       to: arrive(48.0) - 0.15,
       icon: "check",
       text: "Tap [[Save]] to finish",
@@ -158,13 +164,13 @@ export const video2: GuideData = {
     },
     {
       from: leave(23.5) + 0.1,
-      to: tapNext2 - 0.15,
+      to: tapNext2 - 0.35,
       rect: mapArea,
       radius: 0,
       dim: false,
     },
     {
-      from: tapNext2 - 0.15,
+      from: tapNext2 - 0.22,
       to: leave(32.5),
       rect: nextBtn,
       radius: 52,
@@ -172,13 +178,13 @@ export const video2: GuideData = {
     },
     {
       from: leave(32.5) + 0.1,
-      to: tapNext3 - 0.15,
+      to: tapNext3 - 0.35,
       rect: addressForm,
       radius: 24,
       dim: false,
     },
     {
-      from: tapNext3 - 0.15,
+      from: tapNext3 - 0.22,
       to: leave(39.0),
       rect: nextBtn,
       radius: 52,
@@ -186,12 +192,12 @@ export const video2: GuideData = {
     },
     {
       from: leave(39.0) + 0.1,
-      to: tapSave - 0.15,
+      to: tapSave - 0.45,
       rect: titleInput,
       radius: 16,
     },
     {
-      from: tapSave - 0.15,
+      from: tapSave - 0.35,
       to: leave(47.0),
       rect: saveBtn,
       radius: 40,
@@ -200,8 +206,8 @@ export const video2: GuideData = {
     {
       from: arrive(48.0) + 0.1,
       to: end,
-      rect: startNowBtn2,
-      radius: 40,
+      rect: completedStep1Row,
+      radius: 32,
       dim: false,
     },
   ],
