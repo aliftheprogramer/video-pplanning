@@ -72,7 +72,7 @@ const sabahElectricityItem: Rect = { x: 24, y: 1080, w: 672, h: 100 };
 const elecAccountField: Rect = { x: 41, y: 630, w: 638, h: 115 };
 const waterProviderField: Rect = { x: 41, y: 523, w: 638, h: 134 };
 const airSelangorItem: Rect = { x: 24, y: 720, w: 672, h: 95 };
-const waterAccountField: Rect = { x: 41, y: 785, w: 638, h: 115 };
+const waterAccountField: Rect = { x: 40, y: 716, w: 640, h: 116 };
 const saveBtn3: Rect = { x: 40, y: 978, w: 640, h: 104 };
 const completedStep2Row: Rect = { x: 36, y: 600, w: 648, h: 185 };
 
