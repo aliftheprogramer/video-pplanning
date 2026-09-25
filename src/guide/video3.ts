@@ -35,8 +35,6 @@ const cuts: Cut[] = [
   // The app auto-scrolls on long forms. Keep the natural scroll down to
   // property dimensions, then skip the idle pause after scrolling back up.
   { from: 14.0, to: 16.3 },
-  { from: 52.5, to: 59.0 }, // bill accounts: jump to the scrolled, keyboard-open state
-  { from: 64.6, to: 65.9 }, // bill accounts: skip the keyboard lingering open after typing ends
 ];
 
 const { arrive, leave } = guideClock(holds, cuts);
@@ -48,7 +46,13 @@ const tapNext3 = arrive(29.7);
 const tapNext4 = arrive(40.2);
 const tapGenerateAI = arrive(44.2);
 const tapNext5 = arrive(50.3);
-const tapSave = arrive(66.0);
+const tapElecProvider = arrive(52.2);
+const tapSabahElectricity = arrive(54.0);
+const tapElecAccount = arrive(55.5);
+const tapWaterProvider = arrive(59.8);
+const tapAirSelangor = arrive(61.1);
+const tapWaterAccount = arrive(61.8);
+const tapSave = arrive(66.3);
 const end = leave(67.3);
 
 const continueFillBtn: Rect = { x: 128, y: 755, w: 352, h: 94 };
@@ -62,13 +66,14 @@ const amenitiesArea: Rect = { x: 24, y: 210, w: 672, h: 1160 };
 const rulesArea: Rect = { x: 24, y: 405, w: 672, h: 835 };
 const generateAIBtn: Rect = { x: 40, y: 1146, w: 640, h: 104 };
 const descriptionArea: Rect = { x: 24, y: 505, w: 672, h: 675 };
-const billAccountsForm: Rect = { x: 24, y: 380, w: 672, h: 730 };
-// Once a field is focused the keyboard opens and the app scrolls the form
-// up to keep it visible — a different layout than the arrival view above.
-const billAccountsFormScrolled: Rect = { x: 24, y: 180, w: 672, h: 625 };
-// Measured once the keyboard has closed again (right before the Save tap);
-// its position differs while the keyboard is still open, so a cut skips
-// straight past that lingering-keyboard moment to land here.
+// Bill accounts form elements
+const elecProviderField: Rect = { x: 24, y: 465, w: 672, h: 100 };
+const sabahElectricityItem: Rect = { x: 24, y: 1080, w: 672, h: 100 };
+const elecAccountField: Rect = { x: 24, y: 600, w: 672, h: 140 };
+const elecAccountFieldScrolled: Rect = { x: 24, y: 360, w: 672, h: 105 };
+const waterProviderFieldScrolled: Rect = { x: 24, y: 585, w: 672, h: 100 };
+const airSelangorItem: Rect = { x: 24, y: 720, w: 672, h: 95 };
+const waterAccountFieldScrolled: Rect = { x: 24, y: 650, w: 672, h: 105 };
 const saveBtn3: Rect = { x: 40, y: 975, w: 640, h: 105 };
 const completedStep2Row: Rect = { x: 36, y: 600, w: 648, h: 185 };
 
@@ -169,16 +174,40 @@ export const video3: GuideData = {
       text: "Tap [[Next]] to confirm",
     },
     {
-      from: arrive(51.5),
-      to: tapSave - 0.85,
+      from: arrive(50.8),
+      to: arrive(52.4),
       icon: "house",
-      text: "Add [[bill accounts]] (optional)",
+      text: "Select your [[electricity provider]]",
     },
     {
-      from: tapSave - 0.70,
+      from: arrive(52.4),
+      to: arrive(54.3),
+      icon: "check",
+      text: "Choose [[Sabah Electricity]]",
+    },
+    {
+      from: arrive(54.3),
+      to: arrive(59.2),
+      icon: "house",
+      text: "Enter your [[electricity account number]]",
+    },
+    {
+      from: arrive(59.2),
+      to: arrive(61.3),
+      icon: "check",
+      text: "Select [[water provider]] and choose [[Air Selangor]]",
+    },
+    {
+      from: arrive(61.3),
+      to: arrive(64.8),
+      icon: "house",
+      text: "Enter your [[water account number]]",
+    },
+    {
+      from: tapSave - 0.85,
       to: arrive(67.3) - 0.15,
       icon: "check",
-      text: "Tap [[Save]] to finish",
+      text: "Tap [[Save]] to finish Step 2",
     },
     {
       from: arrive(67.3) - 0.15,
@@ -294,27 +323,72 @@ export const video3: GuideData = {
       radius: 52,
       tapAt: tapNext5,
     },
+    // Electricity Provider Dropdown
     {
-      from: arrive(51.5),
-      to: arrive(52.5) - 0.1,
-      rect: billAccountsForm,
-      radius: 24,
+      from: arrive(51.0),
+      to: arrive(52.3),
+      rect: elecProviderField,
+      radius: 16,
+      tapAt: tapElecProvider,
+    },
+    // Select Provider Modal -> Sabah Electricity Sdn Bhd
+    {
+      from: arrive(52.6),
+      to: arrive(54.1),
+      rect: sabahElectricityItem,
+      radius: 16,
+      tapAt: tapSabahElectricity,
+    },
+    // Tap Electricity Account Number field (before keyboard opens)
+    {
+      from: arrive(54.4),
+      to: arrive(55.6),
+      rect: elecAccountField,
+      radius: 16,
+      tapAt: tapElecAccount,
+    },
+    // Scrolled form: Typing electricity account number
+    {
+      from: arrive(56.0),
+      to: arrive(59.1),
+      rect: elecAccountFieldScrolled,
+      radius: 16,
       dim: false,
     },
+    // Water Provider Dropdown (in scrolled state)
     {
-      from: arrive(52.5),
-      to: arrive(64.6) - 0.1,
-      rect: billAccountsFormScrolled,
-      radius: 24,
+      from: arrive(59.2),
+      to: arrive(59.9),
+      rect: waterProviderFieldScrolled,
+      radius: 16,
+      tapAt: tapWaterProvider,
+    },
+    // Select Provider Modal -> Air Selangor
+    {
+      from: arrive(60.2),
+      to: arrive(61.2),
+      rect: airSelangorItem,
+      radius: 16,
+      tapAt: tapAirSelangor,
+    },
+    // Tap Water Account Number and type
+    {
+      from: arrive(61.4),
+      to: arrive(64.8),
+      rect: waterAccountFieldScrolled,
+      radius: 16,
+      tapAt: tapWaterAccount,
       dim: false,
     },
+    // Save button
     {
-      from: arrive(64.6),
-      to: leave(66.0),
+      from: tapSave - 0.85,
+      to: leave(66.3) + 0.1,
       rect: saveBtn3,
       radius: 40,
       tapAt: tapSave,
     },
+    // Completed row on Hub
     {
       from: arrive(67.3) + 0.25,
       to: end,
@@ -372,9 +446,37 @@ export const video3: GuideData = {
       easeIn: 0.6,
       easeOut: 0.6,
     },
+    // Zoom in on Electricity bill selection
     {
-      from: tapSave - 0.6,
-      to: leave(66.0) + 0.3,
+      from: arrive(51.5),
+      to: arrive(54.2),
+      scale: 1.08,
+      target: { x: 360, y: 850 },
+      easeIn: 0.5,
+      easeOut: 0.5,
+    },
+    // Zoom in on Electricity account typing
+    {
+      from: arrive(54.5),
+      to: arrive(59.0),
+      scale: 1.15,
+      target: { x: 360, y: 480 },
+      easeIn: 0.6,
+      easeOut: 0.5,
+    },
+    // Zoom in on Water bill selection & typing
+    {
+      from: arrive(59.2),
+      to: arrive(64.6),
+      scale: 1.12,
+      target: { x: 360, y: 720 },
+      easeIn: 0.5,
+      easeOut: 0.5,
+    },
+    // Zoom in on Save button
+    {
+      from: tapSave - 0.70,
+      to: leave(66.3) + 0.3,
       scale: 1.2,
       target: center(saveBtn3),
       easeIn: 0.6,
