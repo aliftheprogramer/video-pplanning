@@ -72,8 +72,8 @@ const sabahElectricityItem: Rect = { x: 24, y: 1080, w: 672, h: 100 };
 const elecAccountField: Rect = { x: 41, y: 630, w: 638, h: 115 };
 const waterProviderField: Rect = { x: 41, y: 523, w: 638, h: 134 };
 const airSelangorItem: Rect = { x: 24, y: 720, w: 672, h: 95 };
-const waterAccountField: Rect = { x: 41, y: 730, w: 638, h: 115 };
-const saveBtn3: Rect = { x: 40, y: 975, w: 640, h: 105 };
+const waterAccountField: Rect = { x: 41, y: 785, w: 638, h: 115 };
+const saveBtn3: Rect = { x: 40, y: 978, w: 640, h: 104 };
 const completedStep2Row: Rect = { x: 36, y: 600, w: 648, h: 185 };
 
 const center = (r: Rect): Point => ({ x: r.x + r.w / 2, y: r.y + r.h / 2 });
@@ -186,19 +186,19 @@ export const video3: GuideData = {
     },
     {
       from: arrive(54.3),
-      to: arrive(59.2),
+      to: arrive(57.8),
       icon: "house",
       text: "Enter your [[electricity account number]]",
     },
     {
-      from: arrive(59.2),
+      from: arrive(58.0),
       to: arrive(61.3),
       icon: "check",
       text: "Select the [[water provider]] for [[your area]]",
     },
     {
       from: arrive(61.3),
-      to: arrive(64.8),
+      to: arrive(64.1),
       icon: "house",
       text: "Enter your [[water account number]]",
     },
@@ -341,7 +341,7 @@ export const video3: GuideData = {
     // Tap Electricity Account Number field and type
     {
       from: arrive(54.4),
-      to: arrive(59.1),
+      to: arrive(57.45),
       rect: elecAccountField,
       radius: 16,
       tapAt: tapElecAccount,
@@ -349,7 +349,7 @@ export const video3: GuideData = {
     },
     // Water Provider Dropdown
     {
-      from: arrive(59.2),
+      from: arrive(59.0),
       to: arrive(59.9),
       rect: waterProviderField,
       radius: 24,
@@ -366,7 +366,7 @@ export const video3: GuideData = {
     // Tap Water Account Number and type
     {
       from: arrive(61.4),
-      to: arrive(64.8),
+      to: arrive(63.75),
       rect: waterAccountField,
       radius: 16,
       tapAt: tapWaterAccount,
@@ -377,7 +377,7 @@ export const video3: GuideData = {
       from: tapSave - 0.85,
       to: leave(66.3) + 0.1,
       rect: saveBtn3,
-      radius: 40,
+      radius: 52,
       tapAt: tapSave,
     },
     // Completed row on Hub
@@ -450,7 +450,7 @@ export const video3: GuideData = {
     // Zoom in on Electricity account typing
     {
       from: arrive(54.5),
-      to: arrive(59.0),
+      to: arrive(57.8),
       scale: 1.15,
       target: { x: 360, y: 660 },
       easeIn: 0.6,
@@ -459,9 +459,9 @@ export const video3: GuideData = {
     // Zoom in on Water bill selection & typing
     {
       from: arrive(59.2),
-      to: arrive(64.6),
+      to: arrive(64.0),
       scale: 1.12,
-      target: { x: 360, y: 740 },
+      target: { x: 360, y: 640 },
       easeIn: 0.5,
       easeOut: 0.5,
     },
