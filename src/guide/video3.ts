@@ -67,12 +67,12 @@ const rulesArea: Rect = { x: 24, y: 405, w: 672, h: 835 };
 const generateAIBtn: Rect = { x: 40, y: 1146, w: 640, h: 104 };
 const descriptionArea: Rect = { x: 24, y: 505, w: 672, h: 675 };
 // Bill accounts form elements
-const elecProviderField: Rect = { x: 24, y: 465, w: 672, h: 100 };
+const elecProviderField: Rect = { x: 41, y: 466, w: 638, h: 134 };
 const sabahElectricityItem: Rect = { x: 24, y: 1080, w: 672, h: 100 };
-const elecAccountField: Rect = { x: 24, y: 600, w: 672, h: 130 };
-const waterProviderField: Rect = { x: 24, y: 550, w: 672, h: 100 };
+const elecAccountField: Rect = { x: 41, y: 630, w: 638, h: 115 };
+const waterProviderField: Rect = { x: 41, y: 523, w: 638, h: 134 };
 const airSelangorItem: Rect = { x: 24, y: 720, w: 672, h: 95 };
-const waterAccountField: Rect = { x: 24, y: 690, w: 672, h: 130 };
+const waterAccountField: Rect = { x: 41, y: 730, w: 638, h: 115 };
 const saveBtn3: Rect = { x: 40, y: 975, w: 640, h: 105 };
 const completedStep2Row: Rect = { x: 36, y: 600, w: 648, h: 185 };
 
@@ -327,7 +327,7 @@ export const video3: GuideData = {
       from: arrive(51.0),
       to: arrive(52.3),
       rect: elecProviderField,
-      radius: 16,
+      radius: 24,
       tapAt: tapElecProvider,
     },
     // Select Provider Modal -> Sabah Electricity Sdn Bhd
@@ -352,7 +352,7 @@ export const video3: GuideData = {
       from: arrive(59.2),
       to: arrive(59.9),
       rect: waterProviderField,
-      radius: 16,
+      radius: 24,
       tapAt: tapWaterProvider,
     },
     // Select Provider Modal -> Air Selangor
